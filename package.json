@@ -1,0 +1,30 @@
+{
+  "name": "covid19-database",
+  "version": "1.0.0",
+  "description": "A simple Node+Express+PostgresSql project with COVID-19 database",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yixuannliu/covid19-database.git"
+  },
+  "author": "Lucia Liu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yixuannliu/covid19-database/issues"
+  },
+  "homepage": "https://github.com/yixuannliu/covid19-database#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "pg": "^8.2.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.21.11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
