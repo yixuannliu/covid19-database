@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // database
-const db = require("./config/database");
+const db = require("./server/config/database");
 
 // test DB
 try {
@@ -16,7 +16,16 @@ try {
   console.error("Unable to connect to the database:", error);
 }
 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
+
 app.get("/", (req, res) => res.send("INDEX"));
+
+// patient routes
+app.use("/patients", require("./server/routes/patients"));
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}.`);

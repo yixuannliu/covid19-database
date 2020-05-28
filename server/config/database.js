@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-module.exports = new Sequelize("covid19_cases", "lucia", "1104", {
+module.exports = new Sequelize("my_database", "lucia", "1104", {
   host: "localhost",
   dialect: "postgres",
 });
