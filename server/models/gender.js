@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const GenderLookup = sequelize.define(
-  "genderLookup",
+const Gender = sequelize.define(
+  "gender",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -19,8 +19,7 @@ const GenderLookup = sequelize.define(
 );
 
 (async () => {
-  await sequelize.sync({ force: true });
-  console.log("The table for the GenderLookup model was just (re)created!");
+  await sequelize.sync();
 })();
 
-module.exports = GenderLookup;
+module.exports = Gender;

@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const sequalize = require("../config/database");
-const Patient = require("../models/patient");
 const patientsController = require("../controllers").patients;
 
 // GET request
@@ -16,5 +14,6 @@ router.put("/:patientId", patientsController.update);
 
 // DELETE request
 router.delete("/:patientId", patientsController.destroy);
+router.delete("/", patientsController.destroyAll);
 
 module.exports = router;

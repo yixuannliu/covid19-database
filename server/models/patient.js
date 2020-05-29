@@ -4,10 +4,9 @@ const sequelize = require("../config/database");
 const Patient = sequelize.define(
   "patient",
   {
-    // Model attributes are defined here
     id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+      type: DataTypes.BIGINT,
+      autoIncrement: true,
       primaryKey: true,
     },
     age: {
@@ -15,10 +14,6 @@ const Patient = sequelize.define(
     },
     genderId: {
       type: DataTypes.INTEGER,
-      //   references: {
-      //     model: 'genderLookup', // 'persons' refers to table name
-      //     key: 'id',
-      //  }
     },
     occupationId: {
       type: DataTypes.INTEGER,
@@ -33,8 +28,7 @@ const Patient = sequelize.define(
 );
 
 (async () => {
-  await sequelize.sync({ force: true });
-  console.log("The table for the Patient model was just (re)created!");
+  await sequelize.sync();
 })();
 
 module.exports = Patient;
