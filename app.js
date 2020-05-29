@@ -1,4 +1,5 @@
 const express = require("express");
+const logger = require("morgan");
 const bodyParser = require("body-parser");
 const path = require("path");
 
@@ -15,6 +16,9 @@ try {
 } catch (error) {
   console.error("Unable to connect to the database:", error);
 }
+
+// Log requests to the console.
+app.use(logger("dev"));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));

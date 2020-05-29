@@ -4,17 +4,14 @@ const sequalize = require("../config/database");
 const Patient = require("../models/patient");
 const patientsController = require("../controllers").patients;
 
-// GET patients list
-router.get("/", (req, res) =>
-  Patient.findAll()
-    .then((patients) => {
-      console.log(patients);
-      res.sendStatus(200);
-    })
-    .catch((err) => console.log(err))
-);
+// GET request
+router.get("/", patientsController.list);
+router.get("/:patientId", patientsController.retrieve);
 
-// CREATE/ADD patient
+// CREATE request
 router.post("/", patientsController.create);
+
+// UPDATE request
+router.put("/:patientId", patientsController.update);
 
 module.exports = router;
