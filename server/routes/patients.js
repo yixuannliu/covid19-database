@@ -14,4 +14,7 @@ router.post("/", patientsController.create);
 // UPDATE request
 router.put("/:patientId", patientsController.update);
 
+// DELETE request
+router.delete("/:patientId", patientsController.destroy);
+
 module.exports = router;

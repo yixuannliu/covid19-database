@@ -15,6 +15,10 @@ const Patient = sequelize.define(
     },
     genderId: {
       type: DataTypes.INTEGER,
+      //   references: {
+      //     model: 'genderLookup', // 'persons' refers to table name
+      //     key: 'id',
+      //  }
     },
     occupationId: {
       type: DataTypes.INTEGER,
@@ -30,7 +34,7 @@ const Patient = sequelize.define(
 
 (async () => {
   await sequelize.sync({ force: true });
-  console.log("The table for the User model was just (re)created!");
+  console.log("The table for the Patient model was just (re)created!");
 })();
 
 module.exports = Patient;

@@ -23,7 +23,7 @@ module.exports = {
       .then((patient) => {
         if (!patient) {
           return res.status(404).send({
-            message: `Patient with id ${req.params.patientId} is not found`,
+            message: `Patient with id ${req.params.patientId} is not found.`,
           });
         }
         return res.status(200).send(patient);
@@ -44,6 +44,18 @@ module.exports = {
       .then(([rowsUpdate, [updatedPatient]]) =>
         res.status(200).send(updatedPatient)
       )
+      .catch((error) => res.status(400).send(error));
+  },
+  destroy(req, res) {
+    return Patient.destroy({ where: { id: req.params.patientId } })
+      .then((destroyedRow) => {
+        if (!destroyedRow) {
+          return res.status(404).send({
+            message: `Patient with id ${req.params.patientId} is not found.`,
+          });
+        }
+        return res.status(204).send();
+      })
       .catch((error) => res.status(400).send(error));
   },
 };
