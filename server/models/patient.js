@@ -12,9 +12,6 @@ const Patient = sequelize.define(
     age: {
       type: DataTypes.INTEGER,
     },
-    genderId: {
-      type: DataTypes.INTEGER,
-    },
     occupationId: {
       type: DataTypes.INTEGER,
     },

@@ -20,9 +20,18 @@ const Gender = sequelize.define(
 
 (async () => {
   await sequelize.sync().then(() => {
-    Gender.create({ id: 1, name: "FEMALE" });
-    Gender.create({ id: 2, name: "MALE" });
-    Gender.create({ id: 9, name: "NOT STATED" });
+    Gender.findOrCreate({
+      where: { id: 1 },
+      default: { id: 1, name: "FEMALE" },
+    });
+    Gender.findOrCreate({
+      where: { id: 2 },
+      default: { id: 2, name: "MALE" },
+    });
+    Gender.findOrCreate({
+      where: { id: 9 },
+      default: { id: 9, name: "NOT STATED" },
+    });
   });
 })();
 
