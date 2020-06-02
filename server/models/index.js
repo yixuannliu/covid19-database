@@ -4,6 +4,7 @@ const Patient = require("./patient");
 const Gender = require("./gender");
 const Occupation = require("./occupation");
 const Region = require("./region");
+const Hospital = require("./hospital");
 
 Gender.hasMany(Patient);
 Patient.belongsTo(Gender);
@@ -13,6 +14,9 @@ Patient.belongsTo(Occupation);
 
 Region.hasMany(Patient);
 Patient.belongsTo(Region);
+
+Hospital.hasMany(Patient);
+Patient.belongsTo(Hospital);
 
 (async () => {
   await sequelize.sync({ force: true }).then(() => {
@@ -42,6 +46,13 @@ Patient.belongsTo(Region);
         "Prairies (Alberta, Saskatchewan, and Manitoba) and the Northwest Territories",
     });
     Region.create({ name: "British Columbia and Yukon" });
+
+    Hospital.create({
+      name: "Toronto General Hospital",
+      address: "343 Bay Street",
+      capacity: 1000,
+      ventilator: 8,
+    });
   });
 })();
 
@@ -50,4 +61,5 @@ module.exports = {
   Gender,
   Occupation,
   Region,
+  Hospital,
 };
