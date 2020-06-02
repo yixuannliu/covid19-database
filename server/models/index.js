@@ -19,7 +19,11 @@ Patient.belongsTo(Region);
 Hospital.hasMany(Patient);
 Patient.belongsTo(Hospital);
 
-Patient.hasOne(HealthStatus);
+Patient.hasOne(HealthStatus, {
+  foreignKey: {
+    allowNull: false,
+  },
+});
 HealthStatus.belongsTo(Patient);
 
 (async () => {

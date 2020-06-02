@@ -21,7 +21,6 @@ const HealthStatus = sequelize.define(
     death: {
       type: DataTypes.BOOLEAN,
     },
-    // must have patientId
   },
   {
     freezeTableName: true,
