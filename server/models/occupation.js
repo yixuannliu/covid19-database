@@ -1,19 +1,16 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Patient = sequelize.define(
-  "patient",
+const Occupation = sequelize.define(
+  "occupation",
   {
     id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    age: {
-      type: DataTypes.INTEGER,
-    },
-    regionId: {
-      type: DataTypes.INTEGER,
+    name: {
+      type: DataTypes.STRING,
     },
   },
   {
@@ -21,4 +18,4 @@ const Patient = sequelize.define(
   }
 );
 
-module.exports = Patient;
+module.exports = Occupation;
