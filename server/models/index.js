@@ -5,6 +5,7 @@ const Gender = require("./gender");
 const Occupation = require("./occupation");
 const Region = require("./region");
 const Hospital = require("./hospital");
+const HealthStatus = require("./healthStatus");
 
 Gender.hasMany(Patient);
 Patient.belongsTo(Gender);
@@ -17,6 +18,9 @@ Patient.belongsTo(Region);
 
 Hospital.hasMany(Patient);
 Patient.belongsTo(Hospital);
+
+Patient.hasOne(HealthStatus);
+HealthStatus.belongsTo(Patient);
 
 (async () => {
   await sequelize.sync({ force: true }).then(() => {
@@ -62,4 +66,5 @@ module.exports = {
   Occupation,
   Region,
   Hospital,
+  HealthStatus,
 };
