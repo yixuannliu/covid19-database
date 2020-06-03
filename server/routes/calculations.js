@@ -5,7 +5,7 @@ const calculationsController = require("../controllers").calculations;
 // GET request
 router.get(
   "/count/patients/genders",
-  calculationsController.countPatientsByGenderId
+  calculationsController.countPatientsByGender
 );
 
 module.exports = router;

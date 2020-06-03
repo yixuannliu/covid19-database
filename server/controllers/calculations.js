@@ -4,26 +4,29 @@ const Patient = require("../models").Patient;
 const Gender = require("../models").Gender;
 
 module.exports = {
-  countPatientsByGenderId(req, res) {
-    if (!req.query.genderId) {
-      return res.status(400).send({ message: "Please attach query params" });
+  countPatientsByGender(req, res) {
+    const { genderId, genderName } = req.query;
+    if (genderId) {
+      return Patient.count({
+        where: { genderId: req.query.genderId },
+      })
+        .then((number) => res.status(200).send({ number }))
+        .catch((error) => res.status(400).send(error));
     }
-    return Patient.count({
-      where: { genderId: req.query.genderId },
-    })
-      .then((number) => res.status(200).send({ number }))
-      .catch((error) => res.status(400).send(error));
-  },
-  countPatientsByGenderName(req, res) {
-    if (!req.query.genderName) {
-      return res.status(400).send({ message: "Please attach query params" });
+    if (genderName) {
+      return Patient.count({
+        include: [
+          {
+            model: Gender,
+            attributes: [],
+            where: { name: req.query.genderName },
+          },
+        ],
+        group: ["patient.genderId"],
+      })
+        .then((number) => res.status(200).send({ number }))
+        .catch((error) => res.status(400).send(error));
     }
-    // return Patient.findAll({
-    //     attributes: ['id', [sequelize.fn('count', sequelize.col('patients.id')), 'patientCount']],
-    //     include: [{ attributes: [], model: Patient }],
-    //     group: ['model.id']
-    //   })
-    //   .then((number) => res.status(200).send({ number }))
-    //   .catch((error) => res.status(400).send(error));
+    return res.status(400).send({ message: "Please attach query params" });
   },
 };
