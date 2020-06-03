@@ -8,4 +8,9 @@ router.get(
   calculationsController.countPatientsByGender
 );
 
+router.get(
+  "/count/patients/healthStatus/isRecovered",
+  calculationsController.countRecoveredPatientsByRegion
+);
+
 module.exports = router;
