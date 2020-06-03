@@ -5,6 +5,8 @@ const regions = require("./regions");
 const hospital = require("./hospitals");
 const healthStatus = require("./healthStatus");
 
+const calculations = require("./calculations");
+
 module.exports = {
   patients,
   genders,
@@ -12,4 +14,5 @@ module.exports = {
   regions,
   hospital,
   healthStatus,
+  calculations,
 };
