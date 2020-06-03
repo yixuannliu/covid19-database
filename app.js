@@ -33,7 +33,7 @@ app.use("/genders", require("./server/routes/genders"));
 app.use("/occupations", require("./server/routes/occupations"));
 app.use("/regions", require("./server/routes/regions"));
 app.use("/hospitals", require("./server/routes/hospitals"));
-app.use("/healthStatus", require("./server/routes/healthStatus"));
+app.use("/", require("./server/routes/healthStatus"));
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}.`);
