@@ -1,0 +1,11 @@
+{
+  "database": {
+    "dbName": "my_database",
+    "master": {
+      "host": "localhost",
+      "user": "lucia",
+      "password": ""
+    },
+    "protocol": "postgres"
+  }
+}
