@@ -1,17 +1,17 @@
 module.exports = {
-  create(req, res, model) {
+  create(res, model, requestBody) {
     return model
-      .create(req.body)
+      .create(requestBody)
       .then((row) => res.status(201).send(row))
       .catch((error) => res.status(400).send(error));
   },
-  list(req, res, model) {
+  list(res, model) {
     return model
       .findAll({ order: [["id", "ASC"]] })
       .then((rows) => res.status(200).send(rows))
       .catch((error) => res.status(400).send(error));
   },
-  retrieve(req, res, model, id) {
+  retrieve(res, model, id) {
     return model
       .findByPk(id)
       .then((row) => {
@@ -24,16 +24,38 @@ module.exports = {
       })
       .catch((error) => res.status(400).send(error));
   },
-  update(req, res, model, id) {
+  retrieveByColumn(res, model, searchTarget) {
     return model
-      .update(req.body, {
+      .findOne({
+        where: searchTarget,
+      })
+      .then((row) => {
+        if (!row) {
+          return res.status(404).send({
+            message: "Not found",
+          });
+        }
+        return res.status(200).send(row);
+      })
+      .catch((error) => res.status(400).send(error));
+  },
+  update(res, model, requestBody, id) {
+    return model
+      .update(requestBody, {
         returning: true,
         where: { id },
       })
-      .then(([rowsUpdate, [updatedRow]]) => res.status(200).send(updatedRow))
+      .then(([rowsUpdate, [updatedRow]]) => {
+        if (!rowsUpdate) {
+          return res.status(404).send({
+            message: `Row with id ${id} does not exist.`,
+          });
+        }
+        return res.status(200).send(updatedRow);
+      })
       .catch((error) => res.status(400).send(error));
   },
-  destroy(req, res, model, id) {
+  destroy(res, model, id) {
     return model
       .destroy({ where: { id } })
       .then((destroyedRow) => {
@@ -46,7 +68,7 @@ module.exports = {
       })
       .catch((error) => res.status(400).send(error));
   },
-  destroyAll(req, res, model) {
+  destroyAll(res, model) {
     return model
       .destroy({ where: {} })
       .then((destroyedRow) => {

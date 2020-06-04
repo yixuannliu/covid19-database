@@ -3,21 +3,21 @@ const helperControllers = require("./helpers");
 
 module.exports = {
   create(req, res) {
-    helperControllers.create(req, res, Patient);
+    helperControllers.create(res, Patient, req.body);
   },
   list(req, res) {
-    helperControllers.list(req, res, Patient);
+    helperControllers.list(res, Patient);
   },
   retrieve(req, res) {
-    helperControllers.retrieve(req, res, Patient, req.params.patientId);
+    helperControllers.retrieve(res, Patient, req.params.patientId);
   },
   update(req, res) {
-    helperControllers.update(req, res, Patient, req.params.patientId);
+    helperControllers.update(res, Patient, req.body, req.params.patientId);
   },
   destroy(req, res) {
-    helperControllers.destroy(req, res, Patient, req.params.patientId);
+    helperControllers.destroy(res, Patient, req.params.patientId);
   },
   destroyAll(req, res) {
-    helperControllers.destroyAll(req, res, Patient);
+    helperControllers.destroyAll(res, Patient);
   },
 };

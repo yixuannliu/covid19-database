@@ -3,9 +3,9 @@ const helperControllers = require("./helpers");
 
 module.exports = {
   list(req, res) {
-    helperControllers.list(req, res, Occupation);
+    helperControllers.list(res, Occupation);
   },
   retrieve(req, res) {
-    helperControllers.retrieve(req, res, Occupation, req.params.occupationId);
+    helperControllers.retrieve(res, Occupation, req.params.occupationId);
   },
 };
