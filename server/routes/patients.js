@@ -5,7 +5,7 @@ const patientsController = require("../controllers").patients;
 const Joi = require("@hapi/joi");
 const { validateBody } = require("../middleware/validate");
 
-const PATIENTS_SCHEMA = Joi.object({
+const PATIENT_SCHEMA = Joi.object({
   age: Joi.number().required(),
   genderId: Joi.number().required(),
   occupationId: Joi.number().required(),
@@ -18,12 +18,12 @@ router.get("/", patientsController.list);
 router.get("/:patientId", patientsController.retrieve);
 
 // CREATE request
-router.post("/", validateBody(PATIENTS_SCHEMA), patientsController.create);
+router.post("/", validateBody(PATIENT_SCHEMA), patientsController.create);
 
 // UPDATE request
 router.put(
   "/:patientId",
-  validateBody(PATIENTS_SCHEMA),
+  validateBody(PATIENT_SCHEMA),
   patientsController.update
 );
 
