@@ -1,5 +1,3 @@
-const sequelize = require("../config/database");
-
 const Patient = require("../models").Patient;
 const Gender = require("../models").Gender;
 const Region = require("../models").Region;

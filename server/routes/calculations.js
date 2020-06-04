@@ -4,7 +4,7 @@ const calculationsController = require("../controllers").calculations;
 
 // GET request
 router.get(
-  "/count/patients/genders",
+  "patients/count/genders",
   calculationsController.countPatientsByGender
 );
 
