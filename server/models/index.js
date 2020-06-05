@@ -29,18 +29,19 @@ HealthStatus.belongsTo(Patient);
 (async () => {
   await sequelize.sync({ force: true }).then(() => {
     // Gender Lookup Table
-    Gender.create({ name: "Female" });
-    Gender.create({ name: "Male" });
-    Gender.create({ name: "Not stated" });
+    Gender.create({ id: 1, name: "Female" });
+    Gender.create({ id: 2, name: "Male" });
+    Gender.create({ id: 9, name: "Not stated" });
 
     // Occupation Lookup Table
-    Occupation.create({ name: "Health care worker" });
+    Occupation.create({ id: 1, name: "Health care worker" });
     Occupation.create({
+      id: 2,
       name: "School or daycare worker/attendee",
     });
-    Occupation.create({ name: "Long term care resident" });
-    Occupation.create({ name: "Other" });
-    Occupation.create({ name: "Not stated" });
+    Occupation.create({ id: 3, name: "Long term care resident" });
+    Occupation.create({ id: 4, name: "Other" });
+    Occupation.create({ id: 9, name: "Not stated" });
 
     // Region Lookup Table
     Region.create({
