@@ -26,6 +26,7 @@ module.exports = {
         .then((number) => res.status(200).send({ number }))
         .catch((error) => res.status(400).send(error));
     }
+    // if type is gender and no query params, return the whole list of counts
     return res.status(400).send({ message: "Please attach query params" });
   },
   countRecoveredPatientsByRegion(req, res) {
