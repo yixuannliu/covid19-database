@@ -68,9 +68,27 @@ module.exports = {
         ],
         where: { regionId },
       })
-        .then((number) => res.status(200).send({ number }))
+        .then((number) =>
+          res.status(200).send([{ regionId, patientCount: number }])
+        )
         .catch((error) => res.status(400).send(error));
     }
-    return res.status(400).send({ message: "Please attach query params" });
+    return Patient.findAll({
+      raw: true,
+      attributes: [
+        "regionId",
+        [sequelize.fn("count", sequelize.col("patient.id")), "patientCount"],
+      ],
+      include: [
+        {
+          model: HealthStatus,
+          attributes: [],
+          where: { isRecovered: true },
+        },
+      ],
+      group: ["regionId"],
+    })
+      .then((rows) => res.status(200).send(rows))
+      .catch((error) => res.status(400).send(error));
   },
 };
