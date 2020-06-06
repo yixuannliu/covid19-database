@@ -7,11 +7,23 @@ const Region = require("./region");
 const Hospital = require("./hospital");
 const HealthStatus = require("./healthStatus");
 
+const DEFAULT_VALUE = { id: 9, name: "Not stated" };
+
 Gender.hasMany(Patient);
-Patient.belongsTo(Gender);
+Patient.belongsTo(Gender, {
+  foreignKey: {
+    allowNull: false,
+    defaultValue: DEFAULT_VALUE.id,
+  },
+});
 
 Occupation.hasMany(Patient);
-Patient.belongsTo(Occupation);
+Patient.belongsTo(Occupation, {
+  foreignKey: {
+    allowNull: false,
+    defaultValue: DEFAULT_VALUE.id,
+  },
+});
 
 Region.hasMany(Patient);
 Patient.belongsTo(Region);
@@ -31,7 +43,7 @@ HealthStatus.belongsTo(Patient);
     // Gender Lookup Table
     Gender.create({ id: 1, name: "Female" });
     Gender.create({ id: 2, name: "Male" });
-    Gender.create({ id: 9, name: "Not stated" });
+    Gender.create(DEFAULT_VALUE);
 
     // Occupation Lookup Table
     Occupation.create({ id: 1, name: "Health care worker" });
@@ -41,7 +53,7 @@ HealthStatus.belongsTo(Patient);
     });
     Occupation.create({ id: 3, name: "Long term care resident" });
     Occupation.create({ id: 4, name: "Other" });
-    Occupation.create({ id: 9, name: "Not stated" });
+    Occupation.create(DEFAULT_VALUE);
 
     // Region Lookup Table
     Region.create({

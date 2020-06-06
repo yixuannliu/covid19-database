@@ -7,10 +7,10 @@ const { validateBody } = require("../middleware/validate");
 
 const PATIENT_SCHEMA = Joi.object({
   age: Joi.number().required(),
-  genderId: Joi.number().required(),
-  occupationId: Joi.number().required(),
+  genderId: Joi.number(),
+  occupationId: Joi.number(),
   regionId: Joi.number().required(),
-  hospitalId: Joi.number().required(),
+  hospitalId: Joi.number(),
 });
 
 // GET request
