@@ -5,9 +5,15 @@ const calculationsController = require("../controllers").calculations;
 const Joi = require("@hapi/joi");
 const { validateQuery } = require("../middleware/validate");
 
+const { GENDERS } = require("../utils/constants");
+
 const GENDER_COUNTS_SCHEMA = Joi.object({
   genderId: Joi.number(),
-  genderName: Joi.string(), // name should be in enum 'Female', 'Male' and 'Not stated'
+  genderName: Joi.string().valid(
+    GENDERS.MALE,
+    GENDERS.FEMALE,
+    GENDERS.NOT_STATED
+  ),
 });
 
 const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({

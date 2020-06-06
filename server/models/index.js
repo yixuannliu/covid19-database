@@ -7,13 +7,17 @@ const Region = require("./region");
 const Hospital = require("./hospital");
 const HealthStatus = require("./healthStatus");
 
-const DEFAULT_VALUE = { id: 9, name: "Not stated" };
+const {
+  DEFAULT_VALUE_ID,
+  GENDERS,
+  OCCUPATIONS,
+} = require("../utils/constants");
 
 Gender.hasMany(Patient);
 Patient.belongsTo(Gender, {
   foreignKey: {
     allowNull: false,
-    defaultValue: DEFAULT_VALUE.id,
+    defaultValue: DEFAULT_VALUE_ID,
   },
 });
 
@@ -21,7 +25,7 @@ Occupation.hasMany(Patient);
 Patient.belongsTo(Occupation, {
   foreignKey: {
     allowNull: false,
-    defaultValue: DEFAULT_VALUE.id,
+    defaultValue: DEFAULT_VALUE_ID,
   },
 });
 
@@ -41,19 +45,19 @@ HealthStatus.belongsTo(Patient);
 (async () => {
   await sequelize.sync({ force: true }).then(() => {
     // Gender Lookup Table
-    Gender.create({ id: 1, name: "Female" });
-    Gender.create({ id: 2, name: "Male" });
-    Gender.create(DEFAULT_VALUE);
+    Gender.create({ id: 1, name: GENDERS.FEMALE });
+    Gender.create({ id: 2, name: GENDERS.MALE });
+    Gender.create({ id: DEFAULT_VALUE_ID, name: GENDERS.NOT_STATED });
 
     // Occupation Lookup Table
-    Occupation.create({ id: 1, name: "Health care worker" });
+    Occupation.create({ id: 1, name: OCCUPATIONS.HEALTH_CARE });
     Occupation.create({
       id: 2,
-      name: "School or daycare worker/attendee",
+      name: OCCUPATIONS.SCHOOL,
     });
-    Occupation.create({ id: 3, name: "Long term care resident" });
-    Occupation.create({ id: 4, name: "Other" });
-    Occupation.create(DEFAULT_VALUE);
+    Occupation.create({ id: 3, name: OCCUPATIONS.LONG_TERM_CARE });
+    Occupation.create({ id: 4, name: OCCUPATIONS.OTHER });
+    Occupation.create({ id: DEFAULT_VALUE_ID, name: OCCUPATIONS.NOT_STATED });
 
     // Region Lookup Table
     Region.create({
@@ -68,6 +72,7 @@ HealthStatus.belongsTo(Patient);
     });
     Region.create({ name: "British Columbia and Yukon" });
 
+    // TODO: sample hospital/patient record
     Hospital.create({
       name: "Toronto General Hospital",
       address: "343 Bay Street",
@@ -80,7 +85,6 @@ HealthStatus.belongsTo(Patient);
       genderId: 1,
       occupationId: 1,
       regionId: 2,
-      hospitalId: 1,
     });
   });
 })();

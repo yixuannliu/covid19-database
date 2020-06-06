@@ -52,7 +52,6 @@ module.exports = {
       ],
       group: ["gender.id"],
     })
-
       .then((rows) => res.status(200).send(rows))
       .catch((error) => res.status(400).send(error));
   },
