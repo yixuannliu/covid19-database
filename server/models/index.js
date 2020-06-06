@@ -62,6 +62,14 @@ HealthStatus.belongsTo(Patient);
       capacity: 1000,
       ventilator: 8,
     });
+
+    Patient.create({
+      age: 65,
+      genderId: 1,
+      occupationId: 1,
+      regionId: 2,
+      hospitalId: 1,
+    });
   });
 })();
 

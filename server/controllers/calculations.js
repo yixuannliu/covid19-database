@@ -1,3 +1,5 @@
+const sequelize = require("../config/database");
+
 const Patient = require("../models").Patient;
 const Gender = require("../models").Gender;
 const Region = require("../models").Region;
@@ -10,7 +12,14 @@ module.exports = {
       return Patient.count({
         where: { genderId: genderId },
       })
-        .then((number) => res.status(200).send({ number }))
+        .then((number) =>
+          res.status(200).send([
+            {
+              genderId,
+              patientCount: number,
+            },
+          ])
+        )
         .catch((error) => res.status(400).send(error));
     }
     if (genderName) {
@@ -23,11 +32,29 @@ module.exports = {
           },
         ],
       })
-        .then((number) => res.status(200).send({ number }))
+        .then((number) =>
+          res.status(200).send([{ genderName, patientCount: number }])
+        )
         .catch((error) => res.status(400).send(error));
     }
-    // if type is gender and no query params, return the whole list of counts
-    return res.status(400).send({ message: "Please attach query params" });
+    return Patient.findAll({
+      raw: true,
+      attributes: [
+        [sequelize.col("gender.id"), "genderId"],
+        [sequelize.col("gender.name"), "genderName"],
+        [sequelize.fn("count", sequelize.col("patient.id")), "patientCount"],
+      ],
+      include: [
+        {
+          model: Gender,
+          attributes: [],
+        },
+      ],
+      group: ["gender.id"],
+    })
+
+      .then((rows) => res.status(200).send(rows))
+      .catch((error) => res.status(400).send(error));
   },
   countRecoveredPatientsByRegion(req, res) {
     const { regionId } = req.query;
