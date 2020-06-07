@@ -5,54 +5,37 @@ const Gender = require("../models").Gender;
 const Region = require("../models").Region;
 const HealthStatus = require("../models").HealthStatus;
 
+const getFormattedPatientCount = (array) => {
+  if (array.length === 0) {
+    return {};
+  }
+  return array.reduce((acc, curr) => {
+    const { name, patientCount } = curr;
+    acc[name] = patientCount;
+    return acc;
+  }, {});
+};
+
 module.exports = {
   countPatientsByGender(req, res) {
-    const { genderId, genderName } = req.query;
-    if (genderId) {
-      return Patient.count({
-        where: { genderId: genderId },
-      })
-        .then((number) =>
-          res.status(200).send([
-            {
-              genderId,
-              patientCount: number,
-            },
-          ])
-        )
-        .catch((error) => res.status(400).send(error));
-    }
-    if (genderName) {
-      return Patient.count({
-        include: [
-          {
-            model: Gender,
-            attributes: [],
-            where: { name: genderName },
-          },
-        ],
-      })
-        .then((number) =>
-          res.status(200).send([{ genderName, patientCount: number }])
-        )
-        .catch((error) => res.status(400).send(error));
-    }
+    const { id, name } = req.query;
+    const whereClause = id ? { id } : name ? { name } : {};
     return Patient.findAll({
       raw: true,
       attributes: [
-        [sequelize.col("gender.id"), "genderId"],
-        [sequelize.col("gender.name"), "genderName"],
+        "gender.name",
         [sequelize.fn("count", sequelize.col("patient.id")), "patientCount"],
       ],
       include: [
         {
           model: Gender,
           attributes: [],
+          where: whereClause,
         },
       ],
       group: ["gender.id"],
     })
-      .then((rows) => res.status(200).send(rows))
+      .then((rows) => res.status(200).send(getFormattedPatientCount(rows)))
       .catch((error) => res.status(400).send(error));
   },
   countRecoveredPatientsByRegion(req, res) {

@@ -7,13 +7,9 @@ const { validateQuery } = require("../middleware/validate");
 
 const { GENDERS } = require("../utils/constants");
 
-const GENDER_COUNTS_SCHEMA = Joi.object({
-  genderId: Joi.number(),
-  genderName: Joi.string().valid(
-    GENDERS.MALE,
-    GENDERS.FEMALE,
-    GENDERS.NOT_STATED
-  ),
+const PATIENT_COUNT_SCHEMA = Joi.object({
+  id: Joi.number(),
+  name: Joi.string().valid(GENDERS.MALE, GENDERS.FEMALE, GENDERS.NOT_STATED),
 });
 
 const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({
@@ -23,7 +19,7 @@ const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({
 // GET request
 router.get(
   "/patients/count/gender",
-  validateQuery(GENDER_COUNTS_SCHEMA),
+  validateQuery(PATIENT_COUNT_SCHEMA),
   calculationsController.countPatientsByGender
 );
 
