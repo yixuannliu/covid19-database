@@ -6,6 +6,7 @@ const Occupation = require("./occupation");
 const Region = require("./region");
 const Hospital = require("./hospital");
 const HealthStatus = require("./healthStatus");
+const Symptom = require("./symptom");
 
 const {
   DEFAULT_VALUE_ID,
@@ -41,6 +42,13 @@ Patient.hasOne(HealthStatus, {
   },
 });
 HealthStatus.belongsTo(Patient);
+
+Patient.hasOne(Symptom, {
+  foreignKey: {
+    allowNull: false,
+  },
+});
+Symptom.belongsTo(Patient);
 
 (async () => {
   await sequelize.sync({ force: true }).then(() => {
@@ -96,4 +104,5 @@ module.exports = {
   Region,
   Hospital,
   HealthStatus,
+  Symptom,
 };

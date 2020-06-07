@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const hospitalsController = require("../controllers").hospital;
+const hospitalsController = require("../controllers").hospitals;
 
 const Joi = require("@hapi/joi");
 const { validateBody } = require("../middleware/validate");

@@ -34,6 +34,7 @@ app.use("/occupations", require("./server/routes/occupations"));
 app.use("/regions", require("./server/routes/regions"));
 app.use("/hospitals", require("./server/routes/hospitals"));
 app.use("/", require("./server/routes/healthStatus"));
+app.use("/", require("./server/routes/symptoms"));
 
 app.use("/calculations", require("./server/routes/calculations"));
 

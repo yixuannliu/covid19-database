@@ -2,8 +2,9 @@ const patients = require("./patients");
 const genders = require("./genders");
 const occupations = require("./occupations");
 const regions = require("./regions");
-const hospital = require("./hospitals");
+const hospitals = require("./hospitals");
 const healthStatus = require("./healthStatus");
+const symptoms = require("./symptoms");
 
 const calculations = require("./calculations");
 
@@ -12,7 +13,8 @@ module.exports = {
   genders,
   occupations,
   regions,
-  hospital,
+  hospitals,
   healthStatus,
+  symptoms,
   calculations,
 };
