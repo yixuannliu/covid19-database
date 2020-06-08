@@ -2,8 +2,11 @@ const sequelize = require("../config/database");
 
 const Patient = require("../models").Patient;
 const Gender = require("../models").Gender;
+const Occupation = require("../models").Occupation;
 const Region = require("../models").Region;
 const HealthStatus = require("../models").HealthStatus;
+
+const { PATIENT_LOOKUP_TABLES } = require("../utils/constants");
 
 const getFormattedPatientCount = (array) => {
   if (array.length === 0) {
@@ -19,11 +22,28 @@ const getFormattedPatientCount = (array) => {
 module.exports = {
   countPatientsByFilterType(req, res) {
     const { filterType, filterId, filterName } = req.query;
+
     const whereClause = filterId
       ? { id: filterId }
       : filterName
       ? { name: filterName }
       : {};
+
+    let leftJoinModel;
+    switch (filterType) {
+      case PATIENT_LOOKUP_TABLES.GENDER:
+        leftJoinModel = Gender;
+        break;
+      case PATIENT_LOOKUP_TABLES.OCCUPATION:
+        leftJoinModel = Occupation;
+        break;
+      case PATIENT_LOOKUP_TABLES.REGION:
+        leftJoinModel = Region;
+        break;
+      default:
+        leftJoinModel = Gender;
+    }
+
     return Patient.findAll({
       raw: true,
       attributes: [
@@ -32,7 +52,7 @@ module.exports = {
       ],
       include: [
         {
-          model: Gender,
+          model: leftJoinModel,
           attributes: [],
           where: whereClause,
         },
