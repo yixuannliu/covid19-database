@@ -1,13 +1,6 @@
-const { Op } = require("sequelize");
-const sequelize = require("../config/database");
-
-const Patient = require("../models").Patient;
-const HealthStatus = require("../models").HealthStatus;
-
 const {
-  getFormattedPatientCount,
-  getWhereClause,
-  getLeftJoinModel,
+  getPatientLookupModel,
+  getHealthStatusModel,
   patientModelFindAll,
 } = require("./calculationsHelpers");
 
@@ -18,11 +11,11 @@ module.exports = {
       return patientModelFindAll(res, {}, false);
     }
 
-    const patientLookupModel = {
-      model: getLeftJoinModel(filterType),
-      attributes: [],
-      where: getWhereClause(filterId, filterName),
-    };
+    const patientLookupModel = getPatientLookupModel(
+      filterType,
+      filterId,
+      filterName
+    );
 
     return patientModelFindAll(
       res,
@@ -35,24 +28,9 @@ module.exports = {
     );
   },
   countPatientsHealthStatus(req, res) {
-    const {
-      filterType,
-      filterId,
-      filterName,
-      isRecovered,
-      maxRecoveryWeek,
-    } = req.query;
+    const { filterType, filterId, filterName } = req.query;
 
-    const healthStatusModel = {
-      model: HealthStatus,
-      attributes: [],
-      where: {
-        // TODO: different where clause
-        recoveryWeek: {
-          [Op.lte]: maxRecoveryWeek,
-        },
-      },
-    };
+    const healthStatusModel = getHealthStatusModel(req.query);
 
     if (!filterType) {
       return patientModelFindAll(
@@ -64,11 +42,11 @@ module.exports = {
       );
     }
 
-    const patientLookupModel = {
-      model: getLeftJoinModel(filterType),
-      attributes: [],
-      where: getWhereClause(filterId, filterName),
-    };
+    const patientLookupModel = getPatientLookupModel(
+      filterType,
+      filterId,
+      filterName
+    );
 
     return patientModelFindAll(
       res,

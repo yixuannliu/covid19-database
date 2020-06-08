@@ -33,6 +33,8 @@ const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({
   }),
   isRecovered: Joi.boolean(),
   maxRecoveryWeek: Joi.number(),
+  maxOnsetWeekOfSymptoms: Joi.number(),
+  death: Joi.boolean(),
 });
 
 // GET request

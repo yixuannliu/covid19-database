@@ -1,3 +1,6 @@
+const { Op } = require("sequelize");
+const { isNil } = require("lodash");
+
 const sequelize = require("../config/database");
 const { PATIENT_LOOKUP_TABLES } = require("../utils/constants");
 
@@ -5,6 +8,7 @@ const Patient = require("../models").Patient;
 const Gender = require("../models").Gender;
 const Occupation = require("../models").Occupation;
 const Region = require("../models").Region;
+const HealthStatus = require("../models").HealthStatus;
 
 const getFormattedPatientCount = (array) => {
   if (array.length === 0) {
@@ -36,6 +40,47 @@ const getLeftJoinModel = (filterType) => {
   }
 };
 
+const getPatientLookupModel = (filterType, filterId, filterName) => {
+  return {
+    model: getLeftJoinModel(filterType),
+    attributes: [],
+    where: getWhereClause(filterId, filterName),
+  };
+};
+
+const getHealthStatusModel = (requestQuery) => {
+  const {
+    isRecovered,
+    maxRecoveryWeek,
+    maxOnsetWeekOfSymptoms,
+    death,
+  } = requestQuery;
+
+  let healthStatusWhereClause = {};
+  if (!isNil(maxRecoveryWeek)) {
+    healthStatusWhereClause["recoveryWeek"] = {
+      [Op.lte]: maxRecoveryWeek,
+    };
+  }
+  if (!isNil(isRecovered)) {
+    healthStatusWhereClause["isRecovered"] = isRecovered;
+  }
+  if (!isNil(maxOnsetWeekOfSymptoms)) {
+    healthStatusWhereClause["onsetWeekOfSymptoms"] = {
+      [Op.lte]: maxOnsetWeekOfSymptoms,
+    };
+  }
+  if (!isNil(death)) {
+    healthStatusWhereClause["death"] = death;
+  }
+
+  return {
+    model: HealthStatus,
+    attributes: [],
+    where: healthStatusWhereClause,
+  };
+};
+
 const patientModelFindAll = (res, options, shouldFormatResult) => {
   const { addedAttribute, includedModels, groupedAttributes } = options;
 
@@ -62,8 +107,7 @@ const patientModelFindAll = (res, options, shouldFormatResult) => {
 };
 
 module.exports = {
-  getFormattedPatientCount,
-  getWhereClause,
-  getLeftJoinModel,
+  getPatientLookupModel,
+  getHealthStatusModel,
   patientModelFindAll,
 };
