@@ -4,11 +4,14 @@ const { isNil } = require("lodash");
 const sequelize = require("../config/database");
 const { PATIENT_LOOKUP_TABLES } = require("../utils/constants");
 
-const Patient = require("../models").Patient;
-const Gender = require("../models").Gender;
-const Occupation = require("../models").Occupation;
-const Region = require("../models").Region;
-const HealthStatus = require("../models").HealthStatus;
+const {
+  Patient,
+  Gender,
+  Occupation,
+  Region,
+  HealthStatus,
+  Symptom,
+} = require("../models");
 
 const getFormattedPatientCount = (array) => {
   if (array.length === 0) {
@@ -56,28 +59,61 @@ const getHealthStatusModelObj = (requestQuery) => {
     death,
   } = requestQuery;
 
-  let healthStatusWhereClause = {};
+  let whereClause = {};
   if (!isNil(maxRecoveryWeek)) {
-    healthStatusWhereClause["recoveryWeek"] = {
+    whereClause["recoveryWeek"] = {
       [Op.lte]: maxRecoveryWeek,
     };
   }
   if (!isNil(isRecovered)) {
-    healthStatusWhereClause["isRecovered"] = isRecovered;
+    whereClause["isRecovered"] = isRecovered;
   }
   if (!isNil(maxOnsetWeekOfSymptoms)) {
-    healthStatusWhereClause["onsetWeekOfSymptoms"] = {
+    whereClause["onsetWeekOfSymptoms"] = {
       [Op.lte]: maxOnsetWeekOfSymptoms,
     };
   }
   if (!isNil(death)) {
-    healthStatusWhereClause["death"] = death;
+    whereClause["death"] = death;
   }
 
   return {
     model: HealthStatus,
     attributes: [],
-    where: healthStatusWhereClause,
+    where: whereClause,
+  };
+};
+
+const getSymptomModelObj = (requestQuery) => {
+  const {
+    isAsymptomatic,
+    hasCough,
+    hasFever,
+    hasHeadache,
+    hasWeakness,
+  } = requestQuery;
+
+  let whereClause = {};
+  if (!isNil(isAsymptomatic)) {
+    whereClause["isAsymptomatic"] = isAsymptomatic;
+  }
+  if (!isNil(hasCough)) {
+    whereClause["hasCough"] = hasCough;
+  }
+  if (!isNil(hasFever)) {
+    whereClause["hasFever"] = hasFever;
+  }
+  if (!isNil(hasHeadache)) {
+    whereClause["hasHeadache"] = hasHeadache;
+  }
+  if (!isNil(hasWeakness)) {
+    whereClause["hasWeakness"] = hasWeakness;
+  }
+
+  return {
+    model: Symptom,
+    attributes: [],
+    where: whereClause,
   };
 };
 
@@ -109,5 +145,6 @@ const searchInPatientModel = (res, options, shouldFormatResult) => {
 module.exports = {
   getPatientLookupModelObj,
   getHealthStatusModelObj,
+  getSymptomModelObj,
   searchInPatientModel,
 };

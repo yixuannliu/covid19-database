@@ -1,6 +1,7 @@
 const {
   getPatientLookupModelObj,
   getHealthStatusModelObj,
+  getSymptomModelObj,
   searchInPatientModel,
 } = require("./calculationsHelpers");
 
@@ -11,7 +12,7 @@ module.exports = {
       return searchInPatientModel(res, {}, false);
     }
 
-    const patientLookupModel = getPatientLookupModelObj(
+    const patientLookupModelObj = getPatientLookupModelObj(
       filterType,
       filterId,
       filterName
@@ -21,28 +22,28 @@ module.exports = {
       res,
       {
         addedAttribute: `${filterType}.name`,
-        includedModels: [patientLookupModel],
+        includedModels: [patientLookupModelObj],
         groupedAttributes: [`${filterType}.id`],
       },
       true
     );
   },
-  countPatientsHealthStatus(req, res) {
+  countPatientsByHealthStatus(req, res) {
     const { filterType, filterId, filterName } = req.query;
 
-    const healthStatusModel = getHealthStatusModelObj(req.query);
+    const healthStatusModelObj = getHealthStatusModelObj(req.query);
 
     if (!filterType) {
       return searchInPatientModel(
         res,
         {
-          includedModels: [healthStatusModel],
+          includedModels: [healthStatusModelObj],
         },
         false
       );
     }
 
-    const patientLookupModel = getPatientLookupModelObj(
+    const patientLookupModelObj = getPatientLookupModelObj(
       filterType,
       filterId,
       filterName
@@ -52,7 +53,38 @@ module.exports = {
       res,
       {
         addedAttribute: `${filterType}.name`,
-        includedModels: [healthStatusModel, patientLookupModel],
+        includedModels: [healthStatusModelObj, patientLookupModelObj],
+        groupedAttributes: [`${filterType}.id`],
+      },
+      true
+    );
+  },
+  countPatientsBySymptom(req, res) {
+    const { filterType, filterId, filterName } = req.query;
+
+    const symptomModelObj = getSymptomModelObj(req.query);
+
+    if (!filterType) {
+      return searchInPatientModel(
+        res,
+        {
+          includedModels: [symptomModelObj],
+        },
+        false
+      );
+    }
+
+    const patientLookupModelObj = getPatientLookupModelObj(
+      filterType,
+      filterId,
+      filterName
+    );
+
+    return searchInPatientModel(
+      res,
+      {
+        addedAttribute: `${filterType}.name`,
+        includedModels: [symptomModelObj, patientLookupModelObj],
         groupedAttributes: [`${filterType}.id`],
       },
       true

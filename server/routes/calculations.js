@@ -7,6 +7,7 @@ const { validateQuery } = require("../middleware/validate");
 
 const { GENDERS, PATIENT_LOOKUP_TABLES } = require("../utils/constants");
 
+// base schema
 const PATIENT_COUNT_SCHEMA = Joi.object({
   filterType: Joi.string().valid(
     PATIENT_LOOKUP_TABLES.GENDER,
@@ -20,21 +21,19 @@ const PATIENT_COUNT_SCHEMA = Joi.object({
   }),
 });
 
-const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({
-  filterType: Joi.string().valid(
-    PATIENT_LOOKUP_TABLES.GENDER,
-    PATIENT_LOOKUP_TABLES.OCCUPATION,
-    PATIENT_LOOKUP_TABLES.REGION
-  ),
-  filterId: Joi.number(),
-  filterName: Joi.string().when("filterType", {
-    is: PATIENT_LOOKUP_TABLES.GENDER,
-    then: Joi.string().valid(GENDERS.MALE, GENDERS.FEMALE, GENDERS.NOT_STATED),
-  }),
+const HEALTH_STATUS_COUNT_SCHEMA = PATIENT_COUNT_SCHEMA.keys({
   isRecovered: Joi.boolean(),
   maxRecoveryWeek: Joi.number(),
   maxOnsetWeekOfSymptoms: Joi.number(),
   death: Joi.boolean(),
+});
+
+const SYMPTOM_COUNT_SCHEMA = PATIENT_COUNT_SCHEMA.keys({
+  isAsymptomatic: Joi.boolean(),
+  hasCough: Joi.boolean(),
+  hasFever: Joi.boolean(),
+  hasHeadache: Joi.boolean(),
+  hasWeakness: Joi.boolean(),
 });
 
 // GET request
@@ -47,7 +46,13 @@ router.get(
 router.get(
   "/patients/healthStatus/count",
   validateQuery(HEALTH_STATUS_COUNT_SCHEMA),
-  calculationsController.countPatientsHealthStatus
+  calculationsController.countPatientsByHealthStatus
+);
+
+router.get(
+  "/patients/symptoms/count",
+  validateQuery(SYMPTOM_COUNT_SCHEMA),
+  calculationsController.countPatientsBySymptom
 );
 
 module.exports = router;
