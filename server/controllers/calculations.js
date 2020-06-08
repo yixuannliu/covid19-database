@@ -8,44 +8,31 @@ const {
   getFormattedPatientCount,
   getWhereClause,
   getLeftJoinModel,
+  patientModelFindAll,
 } = require("./calculationsHelpers");
 
 module.exports = {
   countPatientsByFilterType(req, res) {
     const { filterType, filterId, filterName } = req.query;
     if (!filterType) {
-      return (
-        Patient.findAll({
-          attributes: [
-            [sequelize.fn("count", sequelize.col("id")), "patientCount"],
-          ],
-        })
-          // [{"patientCount": "1"}] how to deal with result data if no filter applies
-          .then((rows) => res.status(200).send(rows))
-          .catch((error) => res.status(400).send(error))
-      );
+      return patientModelFindAll(res, {}, false);
     }
 
-    const whereClause = getWhereClause(filterId, filterName);
-    const leftJoinModel = getLeftJoinModel(filterType);
+    const patientLookupModel = {
+      model: getLeftJoinModel(filterType),
+      attributes: [],
+      where: getWhereClause(filterId, filterName),
+    };
 
-    return Patient.findAll({
-      raw: true,
-      attributes: [
-        `${filterType}.name`,
-        [sequelize.fn("count", sequelize.col("patient.id")), "patientCount"],
-      ],
-      include: [
-        {
-          model: leftJoinModel,
-          attributes: [],
-          where: whereClause,
-        },
-      ],
-      group: [`${filterType}.id`],
-    })
-      .then((rows) => res.status(200).send(getFormattedPatientCount(rows)))
-      .catch((error) => res.status(400).send(error));
+    return patientModelFindAll(
+      res,
+      {
+        addedAttribute: `${filterType}.name`,
+        includedModels: [patientLookupModel],
+        groupedAttributes: [`${filterType}.id`],
+      },
+      true
+    );
   },
   countPatientsHealthStatus(req, res) {
     const {
@@ -56,64 +43,41 @@ module.exports = {
       maxRecoveryWeek,
     } = req.query;
 
+    const healthStatusModel = {
+      model: HealthStatus,
+      attributes: [],
+      where: {
+        // TODO: different where clause
+        recoveryWeek: {
+          [Op.lte]: maxRecoveryWeek,
+        },
+      },
+    };
+
     if (!filterType) {
-      return (
-        Patient.findAll({
-          raw: true,
-          attributes: [
-            [
-              sequelize.fn("count", sequelize.col("patient.id")),
-              "patientCount",
-            ],
-          ],
-          include: [
-            {
-              model: HealthStatus,
-              attributes: [],
-              where: {
-                // TODO: different where clause
-                recoveryWeek: {
-                  [Op.lte]: maxRecoveryWeek,
-                },
-              },
-            },
-          ],
-        })
-          // [{"patientCount": "1"}] how to deal with result data if no filter applies
-          .then((rows) => res.status(200).send(rows))
-          .catch((error) => res.status(400).send(error))
+      return patientModelFindAll(
+        res,
+        {
+          includedModels: [healthStatusModel],
+        },
+        false
       );
     }
 
-    const whereClause = getWhereClause(filterId, filterName);
-    const leftJoinModel = getLeftJoinModel(filterType);
+    const patientLookupModel = {
+      model: getLeftJoinModel(filterType),
+      attributes: [],
+      where: getWhereClause(filterId, filterName),
+    };
 
-    return Patient.findAll({
-      raw: true,
-      attributes: [
-        `${filterType}.name`,
-        [sequelize.fn("count", sequelize.col("patient.id")), "patientCount"],
-      ],
-      include: [
-        {
-          model: HealthStatus,
-          attributes: [],
-          where: {
-            // TODO: different where clause
-            recoveryWeek: {
-              [Op.lte]: maxRecoveryWeek,
-            },
-          },
-        },
-        {
-          model: leftJoinModel,
-          attributes: [],
-          where: whereClause,
-        },
-      ],
-      group: [`${filterType}.id`],
-    })
-      .then((rows) => res.status(200).send(getFormattedPatientCount(rows)))
-      .catch((error) => res.status(400).send(error));
+    return patientModelFindAll(
+      res,
+      {
+        addedAttribute: `${filterType}.name`,
+        includedModels: [healthStatusModel, patientLookupModel],
+        groupedAttributes: [`${filterType}.id`],
+      },
+      true
+    );
   },
 };
