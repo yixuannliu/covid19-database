@@ -5,11 +5,21 @@ const calculationsController = require("../controllers").calculations;
 const Joi = require("@hapi/joi");
 const { validateQuery } = require("../middleware/validate");
 
-const { GENDERS } = require("../utils/constants");
+const { GENDERS, PATIENT_LOOKUP_TABLES } = require("../utils/constants");
 
 const PATIENT_COUNT_SCHEMA = Joi.object({
-  id: Joi.number(),
-  name: Joi.string().valid(GENDERS.MALE, GENDERS.FEMALE, GENDERS.NOT_STATED),
+  filterType: Joi.string()
+    .valid(
+      PATIENT_LOOKUP_TABLES.GENDER,
+      PATIENT_LOOKUP_TABLES.OCCUPATION,
+      PATIENT_LOOKUP_TABLES.REGION
+    )
+    .required(),
+  filterId: Joi.number(),
+  filterName: Joi.string().when("filterType", {
+    is: PATIENT_LOOKUP_TABLES.GENDER,
+    then: Joi.string().valid(GENDERS.MALE, GENDERS.FEMALE, GENDERS.NOT_STATED),
+  }),
 });
 
 const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({
@@ -18,9 +28,9 @@ const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({
 
 // GET request
 router.get(
-  "/patients/count/gender",
+  "/patients/count",
   validateQuery(PATIENT_COUNT_SCHEMA),
-  calculationsController.countPatientsByGender
+  calculationsController.countPatientsByFilterType
 );
 
 router.get(

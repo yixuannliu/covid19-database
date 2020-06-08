@@ -17,13 +17,17 @@ const getFormattedPatientCount = (array) => {
 };
 
 module.exports = {
-  countPatientsByGender(req, res) {
-    const { id, name } = req.query;
-    const whereClause = id ? { id } : name ? { name } : {};
+  countPatientsByFilterType(req, res) {
+    const { filterType, filterId, filterName } = req.query;
+    const whereClause = filterId
+      ? { id: filterId }
+      : filterName
+      ? { name: filterName }
+      : {};
     return Patient.findAll({
       raw: true,
       attributes: [
-        "gender.name",
+        `${filterType}.name`,
         [sequelize.fn("count", sequelize.col("patient.id")), "patientCount"],
       ],
       include: [
@@ -33,7 +37,7 @@ module.exports = {
           where: whereClause,
         },
       ],
-      group: ["gender.id"],
+      group: [`${filterType}.id`],
     })
       .then((rows) => res.status(200).send(getFormattedPatientCount(rows)))
       .catch((error) => res.status(400).send(error));
