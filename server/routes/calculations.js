@@ -8,13 +8,11 @@ const { validateQuery } = require("../middleware/validate");
 const { GENDERS, PATIENT_LOOKUP_TABLES } = require("../utils/constants");
 
 const PATIENT_COUNT_SCHEMA = Joi.object({
-  filterType: Joi.string()
-    .valid(
-      PATIENT_LOOKUP_TABLES.GENDER,
-      PATIENT_LOOKUP_TABLES.OCCUPATION,
-      PATIENT_LOOKUP_TABLES.REGION
-    )
-    .required(),
+  filterType: Joi.string().valid(
+    PATIENT_LOOKUP_TABLES.GENDER,
+    PATIENT_LOOKUP_TABLES.OCCUPATION,
+    PATIENT_LOOKUP_TABLES.REGION
+  ),
   filterId: Joi.number(),
   filterName: Joi.string().when("filterType", {
     is: PATIENT_LOOKUP_TABLES.GENDER,
@@ -23,13 +21,11 @@ const PATIENT_COUNT_SCHEMA = Joi.object({
 });
 
 const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({
-  filterType: Joi.string()
-    .valid(
-      PATIENT_LOOKUP_TABLES.GENDER,
-      PATIENT_LOOKUP_TABLES.OCCUPATION,
-      PATIENT_LOOKUP_TABLES.REGION
-    )
-    .required(),
+  filterType: Joi.string().valid(
+    PATIENT_LOOKUP_TABLES.GENDER,
+    PATIENT_LOOKUP_TABLES.OCCUPATION,
+    PATIENT_LOOKUP_TABLES.REGION
+  ),
   filterId: Joi.number(),
   filterName: Joi.string().when("filterType", {
     is: PATIENT_LOOKUP_TABLES.GENDER,

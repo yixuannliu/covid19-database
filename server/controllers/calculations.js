@@ -13,6 +13,19 @@ const {
 module.exports = {
   countPatientsByFilterType(req, res) {
     const { filterType, filterId, filterName } = req.query;
+    if (!filterType) {
+      return (
+        Patient.findAll({
+          attributes: [
+            [sequelize.fn("count", sequelize.col("id")), "patientCount"],
+          ],
+        })
+          // [{"patientCount": "1"}] how to deal with result data if no filter applies
+          .then((rows) => res.status(200).send(rows))
+          .catch((error) => res.status(400).send(error))
+      );
+    }
+
     const whereClause = getWhereClause(filterId, filterName);
     const leftJoinModel = getLeftJoinModel(filterType);
 
@@ -42,6 +55,36 @@ module.exports = {
       isRecovered,
       maxRecoveryWeek,
     } = req.query;
+
+    if (!filterType) {
+      return (
+        Patient.findAll({
+          raw: true,
+          attributes: [
+            [
+              sequelize.fn("count", sequelize.col("patient.id")),
+              "patientCount",
+            ],
+          ],
+          include: [
+            {
+              model: HealthStatus,
+              attributes: [],
+              where: {
+                // TODO: different where clause
+                recoveryWeek: {
+                  [Op.lte]: maxRecoveryWeek,
+                },
+              },
+            },
+          ],
+        })
+          // [{"patientCount": "1"}] how to deal with result data if no filter applies
+          .then((rows) => res.status(200).send(rows))
+          .catch((error) => res.status(400).send(error))
+      );
+    }
+
     const whereClause = getWhereClause(filterId, filterName);
     const leftJoinModel = getLeftJoinModel(filterType);
 
@@ -56,6 +99,7 @@ module.exports = {
           model: HealthStatus,
           attributes: [],
           where: {
+            // TODO: different where clause
             recoveryWeek: {
               [Op.lte]: maxRecoveryWeek,
             },
