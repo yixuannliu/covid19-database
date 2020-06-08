@@ -23,7 +23,20 @@ const PATIENT_COUNT_SCHEMA = Joi.object({
 });
 
 const HEALTH_STATUS_COUNT_SCHEMA = Joi.object({
-  regionId: Joi.number(),
+  filterType: Joi.string()
+    .valid(
+      PATIENT_LOOKUP_TABLES.GENDER,
+      PATIENT_LOOKUP_TABLES.OCCUPATION,
+      PATIENT_LOOKUP_TABLES.REGION
+    )
+    .required(),
+  filterId: Joi.number(),
+  filterName: Joi.string().when("filterType", {
+    is: PATIENT_LOOKUP_TABLES.GENDER,
+    then: Joi.string().valid(GENDERS.MALE, GENDERS.FEMALE, GENDERS.NOT_STATED),
+  }),
+  isRecovered: Joi.boolean(),
+  maxRecoveryWeek: Joi.number(),
 });
 
 // GET request
@@ -34,9 +47,9 @@ router.get(
 );
 
 router.get(
-  "/patients/count/healthStatus/isRecovered",
+  "/patients/healthStatus/count",
   validateQuery(HEALTH_STATUS_COUNT_SCHEMA),
-  calculationsController.countRecoveredPatientsByRegion
+  calculationsController.countPatientsHealthStatus
 );
 
 module.exports = router;
