@@ -1,23 +1,23 @@
 const {
-  getPatientLookupModel,
-  getHealthStatusModel,
-  patientModelFindAll,
+  getPatientLookupModelObj,
+  getHealthStatusModelObj,
+  searchInPatientModel,
 } = require("./calculationsHelpers");
 
 module.exports = {
   countPatientsByFilterType(req, res) {
     const { filterType, filterId, filterName } = req.query;
     if (!filterType) {
-      return patientModelFindAll(res, {}, false);
+      return searchInPatientModel(res, {}, false);
     }
 
-    const patientLookupModel = getPatientLookupModel(
+    const patientLookupModel = getPatientLookupModelObj(
       filterType,
       filterId,
       filterName
     );
 
-    return patientModelFindAll(
+    return searchInPatientModel(
       res,
       {
         addedAttribute: `${filterType}.name`,
@@ -30,10 +30,10 @@ module.exports = {
   countPatientsHealthStatus(req, res) {
     const { filterType, filterId, filterName } = req.query;
 
-    const healthStatusModel = getHealthStatusModel(req.query);
+    const healthStatusModel = getHealthStatusModelObj(req.query);
 
     if (!filterType) {
-      return patientModelFindAll(
+      return searchInPatientModel(
         res,
         {
           includedModels: [healthStatusModel],
@@ -42,13 +42,13 @@ module.exports = {
       );
     }
 
-    const patientLookupModel = getPatientLookupModel(
+    const patientLookupModel = getPatientLookupModelObj(
       filterType,
       filterId,
       filterName
     );
 
-    return patientModelFindAll(
+    return searchInPatientModel(
       res,
       {
         addedAttribute: `${filterType}.name`,

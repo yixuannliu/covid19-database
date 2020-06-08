@@ -40,7 +40,7 @@ const getLeftJoinModel = (filterType) => {
   }
 };
 
-const getPatientLookupModel = (filterType, filterId, filterName) => {
+const getPatientLookupModelObj = (filterType, filterId, filterName) => {
   return {
     model: getLeftJoinModel(filterType),
     attributes: [],
@@ -48,7 +48,7 @@ const getPatientLookupModel = (filterType, filterId, filterName) => {
   };
 };
 
-const getHealthStatusModel = (requestQuery) => {
+const getHealthStatusModelObj = (requestQuery) => {
   const {
     isRecovered,
     maxRecoveryWeek,
@@ -81,7 +81,7 @@ const getHealthStatusModel = (requestQuery) => {
   };
 };
 
-const patientModelFindAll = (res, options, shouldFormatResult) => {
+const searchInPatientModel = (res, options, shouldFormatResult) => {
   const { addedAttribute, includedModels, groupedAttributes } = options;
 
   const attributes = [
@@ -107,7 +107,7 @@ const patientModelFindAll = (res, options, shouldFormatResult) => {
 };
 
 module.exports = {
-  getPatientLookupModel,
-  getHealthStatusModel,
-  patientModelFindAll,
+  getPatientLookupModelObj,
+  getHealthStatusModelObj,
+  searchInPatientModel,
 };
