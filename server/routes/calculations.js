@@ -36,6 +36,11 @@ const SYMPTOM_COUNT_SCHEMA = PATIENT_COUNT_SCHEMA.keys({
   hasWeakness: Joi.boolean(),
 });
 
+const HOSPITAL_COUNT_SCHEMA = PATIENT_COUNT_SCHEMA.keys({
+  hospitalId: Joi.number(),
+  hospitalName: Joi.string(),
+});
+
 // GET request
 router.get(
   "/patients/count",
@@ -53,6 +58,12 @@ router.get(
   "/patients/symptoms/count",
   validateQuery(SYMPTOM_COUNT_SCHEMA),
   calculationsController.countPatientsBySymptom
+);
+
+router.get(
+  "/patients/hospitals/count",
+  validateQuery(HOSPITAL_COUNT_SCHEMA),
+  calculationsController.countPatientsByHospital
 );
 
 module.exports = router;

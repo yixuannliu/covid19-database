@@ -1,5 +1,6 @@
 const {
   getPatientLookupModelObj,
+  getHospitalModelObj,
   getHealthStatusModelObj,
   getSymptomModelObj,
   searchInPatientModel,
@@ -23,6 +24,35 @@ module.exports = {
       {
         addedAttribute: `${filterType}.name`,
         includedModels: [patientLookupModelObj],
+        groupedAttributes: [`${filterType}.id`],
+      },
+      true
+    );
+  },
+  countPatientsByHospital(req, res) {
+    const { filterType, filterId, filterName } = req.query;
+
+    const hospitalModelObj = getHospitalModelObj(req.query);
+
+    if (!filterType) {
+      return searchInPatientModel(
+        res,
+        { includedModels: [hospitalModelObj] },
+        false
+      );
+    }
+
+    const patientLookupModelObj = getPatientLookupModelObj(
+      filterType,
+      filterId,
+      filterName
+    );
+
+    return searchInPatientModel(
+      res,
+      {
+        addedAttribute: `${filterType}.name`,
+        includedModels: [hospitalModelObj, patientLookupModelObj],
         groupedAttributes: [`${filterType}.id`],
       },
       true

@@ -11,6 +11,7 @@ const {
   Region,
   HealthStatus,
   Symptom,
+  Hospital,
 } = require("../models");
 
 const getFormattedPatientCount = (array) => {
@@ -48,6 +49,24 @@ const getPatientLookupModelObj = (filterType, filterId, filterName) => {
     model: getLeftJoinModel(filterType),
     attributes: [],
     where: getWhereClause(filterId, filterName),
+  };
+};
+
+const getHospitalModelObj = (requestQuery) => {
+  const { hospitalId, hospitalName } = requestQuery;
+
+  let whereClause = {};
+  if (!isNil(hospitalId)) {
+    whereClause["id"] = hospitalId;
+  }
+  if (!isNil(hospitalName)) {
+    whereClause["name"] = hospitalName;
+  }
+
+  return {
+    model: Hospital,
+    attributes: [],
+    where: whereClause,
   };
 };
 
@@ -144,6 +163,7 @@ const searchInPatientModel = (res, options, shouldFormatResult) => {
 
 module.exports = {
   getPatientLookupModelObj,
+  getHospitalModelObj,
   getHealthStatusModelObj,
   getSymptomModelObj,
   searchInPatientModel,
