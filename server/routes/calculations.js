@@ -12,7 +12,8 @@ const PATIENT_COUNT_SCHEMA = Joi.object({
   filterType: Joi.string().valid(
     PATIENT_LOOKUP_TABLES.GENDER,
     PATIENT_LOOKUP_TABLES.OCCUPATION,
-    PATIENT_LOOKUP_TABLES.REGION
+    PATIENT_LOOKUP_TABLES.REGION,
+    "hospital"
   ),
   filterId: Joi.number(),
   filterName: Joi.string().when("filterType", {

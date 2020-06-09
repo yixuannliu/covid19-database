@@ -39,6 +39,8 @@ const getLeftJoinModel = (filterType) => {
       return Occupation;
     case PATIENT_LOOKUP_TABLES.REGION:
       return Region;
+    case "hospital":
+      return Hospital;
     default:
       return Gender;
   }
