@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const { isNil } = require("lodash");
 
 const sequelize = require("../config/database");
-const { PATIENT_LOOKUP_TABLES } = require("../utils/constants");
+const { PATIENT_REFERENCE_TABLES } = require("../utils/constants");
 
 const {
   Patient,
@@ -25,28 +25,28 @@ const getFormattedPatientCount = (array) => {
   }, {});
 };
 
-const getWhereClause = (filterId, filterName) => {
-  if (filterId) return { id: filterId };
-  if (filterName) return { name: filterName };
-  return {};
-};
-
-const getLeftJoinModel = (filterType) => {
-  switch (filterType) {
-    case PATIENT_LOOKUP_TABLES.GENDER:
-      return Gender;
-    case PATIENT_LOOKUP_TABLES.OCCUPATION:
-      return Occupation;
-    case PATIENT_LOOKUP_TABLES.REGION:
-      return Region;
-    case "hospital":
-      return Hospital;
-    default:
-      return Gender;
-  }
-};
-
 const getPatientLookupModelObj = (filterType, filterId, filterName) => {
+  const getWhereClause = (filterId, filterName) => {
+    if (filterId) return { id: filterId };
+    if (filterName) return { name: filterName };
+    return {};
+  };
+
+  const getLeftJoinModel = (filterType) => {
+    switch (filterType) {
+      case PATIENT_REFERENCE_TABLES.GENDER:
+        return Gender;
+      case PATIENT_REFERENCE_TABLES.OCCUPATION:
+        return Occupation;
+      case PATIENT_REFERENCE_TABLES.REGION:
+        return Region;
+      case PATIENT_REFERENCE_TABLES.HOSPITAL:
+        return Hospital;
+      default:
+        return Gender;
+    }
+  };
+
   return {
     model: getLeftJoinModel(filterType),
     attributes: [],

@@ -14,15 +14,16 @@ const OCCUPATIONS = {
   NOT_STATED: "Not stated",
 };
 
-const PATIENT_LOOKUP_TABLES = {
+const PATIENT_REFERENCE_TABLES = {
   GENDER: "gender",
   OCCUPATION: "occupation",
   REGION: "region",
+  HOSPITAL: "hospital",
 };
 
 module.exports = {
   DEFAULT_VALUE_ID,
   GENDERS,
   OCCUPATIONS,
-  PATIENT_LOOKUP_TABLES,
+  PATIENT_REFERENCE_TABLES,
 };
