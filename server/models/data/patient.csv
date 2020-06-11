@@ -1,4 +1,4 @@
-age,genderId,occupationId,regionId
-65,1,9,2
-49,2,3,5
+age,genderId,occupationId,regionId,hospitalId
+65,1,9,2,1
+49,2,3,5,2
 56,9,3,3

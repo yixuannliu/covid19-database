@@ -49,7 +49,7 @@ Patient.hasOne(Symptom, {
 });
 Symptom.belongsTo(Patient);
 
-const readCSVFile = async (model, modelName, onlyOneColumn = false) => {
+const readCSVFile = (model, modelName, onlyOneColumn = false) => {
   return new Promise((resolve, reject) => {
     fs.createReadStream(`${__dirname}/data/${modelName}.csv`)
       .pipe(onlyOneColumn ? csvParser({ separator: "\t" }) : csvParser())
@@ -63,13 +63,13 @@ const readCSVFile = async (model, modelName, onlyOneColumn = false) => {
 };
 
 (async () => {
-  await sequelize.sync({ force: true }).then(() =>
-    readCSVFile(Gender, "gender")
-      .then(() => readCSVFile(Occupation, "occupation"))
-      .then(() => readCSVFile(Region, "region", true))
-      .then(() => readCSVFile(Hospital, "hospital"))
-      .then(() => readCSVFile(Patient, "patient"))
-  );
+  await sequelize.sync({ force: true }).then(async () => {
+    await readCSVFile(Gender, "gender");
+    await readCSVFile(Occupation, "occupation");
+    await readCSVFile(Region, "region", true);
+    await readCSVFile(Hospital, "hospital");
+    await readCSVFile(Patient, "patient");
+  });
 })();
 
 module.exports = {
