@@ -1,3 +1,6 @@
+const fs = require("fs");
+const csvParser = require("csv-parser");
+
 const sequelize = require("../config/database");
 
 const Patient = require("./patient");
@@ -8,11 +11,7 @@ const Hospital = require("./hospital");
 const HealthStatus = require("./healthStatus");
 const Symptom = require("./symptom");
 
-const {
-  DEFAULT_VALUE_ID,
-  GENDERS,
-  OCCUPATIONS,
-} = require("../utils/constants");
+const { DEFAULT_VALUE_ID } = require("../utils/constants");
 
 Gender.hasMany(Patient);
 Patient.belongsTo(Gender, {
@@ -50,51 +49,27 @@ Patient.hasOne(Symptom, {
 });
 Symptom.belongsTo(Patient);
 
-(async () => {
-  await sequelize.sync({ force: true }).then(() => {
-    // Gender Lookup Table
-    Gender.create({ id: 1, name: GENDERS.FEMALE });
-    Gender.create({ id: 2, name: GENDERS.MALE });
-    Gender.create({ id: DEFAULT_VALUE_ID, name: GENDERS.NOT_STATED });
-
-    // Occupation Lookup Table
-    Occupation.create({ id: 1, name: OCCUPATIONS.HEALTH_CARE });
-    Occupation.create({
-      id: 2,
-      name: OCCUPATIONS.SCHOOL,
-    });
-    Occupation.create({ id: 3, name: OCCUPATIONS.LONG_TERM_CARE });
-    Occupation.create({ id: 4, name: OCCUPATIONS.OTHER });
-    Occupation.create({ id: DEFAULT_VALUE_ID, name: OCCUPATIONS.NOT_STATED });
-
-    // Region Lookup Table
-    Region.create({
-      name:
-        "Atlantic (New Brunswick, Nova Scotia, Prince Edward Island, Newfoundland and Labrador)",
-    });
-    Region.create({ name: "Quebec" });
-    Region.create({ name: "Ontario and Nunavut" });
-    Region.create({
-      name:
-        "Prairies (Alberta, Saskatchewan, and Manitoba) and the Northwest Territories",
-    });
-    Region.create({ name: "British Columbia and Yukon" });
-
-    // TODO: sample hospital/patient record
-    Hospital.create({
-      name: "Toronto General Hospital",
-      address: "343 Bay Street",
-      capacity: 1000,
-      ventilator: 8,
-    });
-
-    Patient.create({
-      age: 65,
-      genderId: 1,
-      occupationId: 1,
-      regionId: 2,
-    });
+const readCSVFile = async (model, modelName, onlyOneColumn = false) => {
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(`${__dirname}/data/${modelName}.csv`)
+      .pipe(onlyOneColumn ? csvParser({ separator: "\t" }) : csvParser())
+      .on("error", (err) => reject(err))
+      .on("data", (row) => model.create(row))
+      .on("end", () => {
+        console.log(`${modelName.toUpperCase()} Table has been initiallized.`);
+        resolve();
+      });
   });
+};
+
+(async () => {
+  await sequelize.sync({ force: true }).then(() =>
+    readCSVFile(Gender, "gender")
+      .then(() => readCSVFile(Occupation, "occupation"))
+      .then(() => readCSVFile(Region, "region", true))
+      .then(() => readCSVFile(Hospital, "hospital"))
+      .then(() => readCSVFile(Patient, "patient"))
+  );
 })();
 
 module.exports = {
