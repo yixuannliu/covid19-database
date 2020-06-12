@@ -20,6 +20,10 @@ const getFormattedPatientCount = (array) => {
   }
   return array.reduce((acc, curr) => {
     const { name, patientCount } = curr;
+    if (!name) {
+      acc["total"] = patientCount;
+      return acc;
+    }
     acc[name] = patientCount;
     return acc;
   }, {});
@@ -138,7 +142,7 @@ const getSymptomModelObj = (requestQuery) => {
   };
 };
 
-const searchInPatientModel = (res, options, shouldFormatResult) => {
+const searchInPatientModel = (res, options) => {
   const { addedAttribute, includedModels, groupedAttributes } = options;
 
   const attributes = [
@@ -155,11 +159,7 @@ const searchInPatientModel = (res, options, shouldFormatResult) => {
     include: includedModels,
     group: groupedAttributes,
   })
-    .then((rows) =>
-      res
-        .status(200)
-        .send(shouldFormatResult ? getFormattedPatientCount(rows) : rows)
-    )
+    .then((rows) => res.status(200).send(getFormattedPatientCount(rows)))
     .catch((error) => res.status(400).send(error));
 };
 
