@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { isNil } = require("lodash");
+const { isNil, isEmpty } = require("lodash");
 
 const sequelize = require("../config/database");
 const { PATIENT_REFERENCE_TABLES } = require("../utils/constants");
@@ -29,7 +29,9 @@ const getFormattedPatientCount = (array) => {
   }, {});
 };
 
-const getPatientLookupModelObj = (filterType, filterId, filterName) => {
+const getPatientLookupModelObj = (requestQuery) => {
+  const { filterType, filterId, filterName } = requestQuery;
+
   const getWhereClause = (filterId, filterName) => {
     if (filterId) return { id: filterId };
     if (filterName) return { name: filterName };
@@ -55,6 +57,9 @@ const getPatientLookupModelObj = (filterType, filterId, filterName) => {
     model: getLeftJoinModel(filterType),
     attributes: [],
     where: getWhereClause(filterId, filterName),
+    required: filterId || filterName ? true : false,
+    // required: false,
+    right: true, // will create a right join
   };
 };
 
@@ -142,8 +147,9 @@ const getSymptomModelObj = (requestQuery) => {
   };
 };
 
-const searchInPatientModel = (res, options) => {
+const searchInPatientModel = (res, requestQuery, options) => {
   const { addedAttribute, includedModels, groupedAttributes } = options;
+  const { filterMinAge, filterMaxAge } = requestQuery;
 
   const attributes = [
     [sequelize.fn("count", sequelize.col("patient.id")), "patientCount"],
@@ -153,10 +159,22 @@ const searchInPatientModel = (res, options) => {
     attributes.push(addedAttribute);
   }
 
+  let whereClauseForAge = {};
+  if (!isNil(filterMaxAge)) {
+    whereClauseForAge[Op.lte] = filterMaxAge;
+  }
+  if (!isNil(filterMinAge)) {
+    whereClauseForAge[Op.gte] = filterMinAge;
+  }
+
   return Patient.findAll({
     raw: true,
     attributes,
     include: includedModels,
+    where:
+      isNil(filterMaxAge) && isNil(filterMinAge)
+        ? {}
+        : { age: whereClauseForAge },
     group: groupedAttributes,
   })
     .then((rows) => res.status(200).send(getFormattedPatientCount(rows)))

@@ -20,6 +20,8 @@ const PATIENT_COUNT_SCHEMA = Joi.object({
     is: PATIENT_REFERENCE_TABLES.GENDER,
     then: Joi.string().valid(GENDERS.MALE, GENDERS.FEMALE, GENDERS.NOT_STATED),
   }),
+  filterMinAge: Joi.number(),
+  filterMaxAge: Joi.number(),
 });
 
 const HEALTH_STATUS_COUNT_SCHEMA = PATIENT_COUNT_SCHEMA.keys({
