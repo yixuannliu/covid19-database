@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { isNil } = require("lodash");
+const { isNil, pick } = require("lodash");
 
 const sequelize = require("../config/database");
 const { PATIENT_REFERENCE_TABLES } = require("../utils/constants");
@@ -104,30 +104,20 @@ const getHealthStatusModelObj = (requestQuery) => {
 };
 
 const getSymptomModelObj = (requestQuery) => {
-  const {
-    isAsymptomatic,
-    hasCough,
-    hasFever,
-    hasHeadache,
-    hasWeakness,
-  } = requestQuery;
-
-  let whereClause = {};
-  if (!isNil(isAsymptomatic)) {
-    whereClause["isAsymptomatic"] = isAsymptomatic;
-  }
-  if (!isNil(hasCough)) {
-    whereClause["hasCough"] = hasCough;
-  }
-  if (!isNil(hasFever)) {
-    whereClause["hasFever"] = hasFever;
-  }
-  if (!isNil(hasHeadache)) {
-    whereClause["hasHeadache"] = hasHeadache;
-  }
-  if (!isNil(hasWeakness)) {
-    whereClause["hasWeakness"] = hasWeakness;
-  }
+  const whereClause = Object.entries(
+    pick(requestQuery, [
+      "isAsymptomatic",
+      "hasCough",
+      "hasFever",
+      "hasHeadache",
+      "hasWeakness",
+    ])
+  ).reduce((acc, [key, value]) => {
+    if (!isNil(value)) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
 
   return {
     model: Symptom,
