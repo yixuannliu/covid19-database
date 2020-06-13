@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { isNil, isEmpty } = require("lodash");
+const { isNil } = require("lodash");
 
 const sequelize = require("../config/database");
 const { PATIENT_REFERENCE_TABLES } = require("../utils/constants");
@@ -30,14 +30,6 @@ const getFormattedPatientCount = (array) => {
 };
 
 const getPatientLookupModelObj = (requestQuery) => {
-  const { filterType, filterId, filterName } = requestQuery;
-
-  const getWhereClause = (filterId, filterName) => {
-    if (filterId) return { id: filterId };
-    if (filterName) return { name: filterName };
-    return {};
-  };
-
   const getLeftJoinModel = (filterType) => {
     switch (filterType) {
       case PATIENT_REFERENCE_TABLES.GENDER:
@@ -54,11 +46,8 @@ const getPatientLookupModelObj = (requestQuery) => {
   };
 
   return {
-    model: getLeftJoinModel(filterType),
+    model: getLeftJoinModel(requestQuery.filterType),
     attributes: [],
-    where: getWhereClause(filterId, filterName),
-    required: filterId || filterName ? true : false,
-    // required: false,
     right: true, // will create a right join
   };
 };
@@ -148,33 +137,50 @@ const getSymptomModelObj = (requestQuery) => {
 };
 
 const searchInPatientModel = (res, requestQuery, options) => {
-  const { addedAttribute, includedModels, groupedAttributes } = options;
-  const { filterMinAge, filterMaxAge } = requestQuery;
+  const getWhereClause = (requestQuery) => {
+    const {
+      filterMinAge,
+      filterMaxAge,
+      filterType,
+      filterId,
+      filterName,
+    } = requestQuery;
 
+    let whereClause = {};
+    if (filterId) {
+      whereClause[`$${filterType}.id$`] = filterId;
+    }
+    if (filterName) {
+      whereClause[`$${filterType}.name$`] = filterName;
+    }
+    if (isNil(filterMaxAge) && isNil(filterMinAge)) {
+      return whereClause;
+    }
+
+    let whereClauseForAge = {};
+    if (!isNil(filterMaxAge)) {
+      whereClauseForAge[Op.lte] = filterMaxAge;
+    }
+    if (!isNil(filterMinAge)) {
+      whereClauseForAge[Op.gte] = filterMinAge;
+    }
+    whereClause["age"] = whereClauseForAge;
+    return whereClause;
+  };
+
+  const { addedAttribute, includedModels, groupedAttributes } = options;
   const attributes = [
     [sequelize.fn("count", sequelize.col("patient.id")), "patientCount"],
   ];
-
   if (addedAttribute) {
     attributes.push(addedAttribute);
-  }
-
-  let whereClauseForAge = {};
-  if (!isNil(filterMaxAge)) {
-    whereClauseForAge[Op.lte] = filterMaxAge;
-  }
-  if (!isNil(filterMinAge)) {
-    whereClauseForAge[Op.gte] = filterMinAge;
   }
 
   return Patient.findAll({
     raw: true,
     attributes,
     include: includedModels,
-    where:
-      isNil(filterMaxAge) && isNil(filterMinAge)
-        ? {}
-        : { age: whereClauseForAge },
+    where: getWhereClause(requestQuery),
     group: groupedAttributes,
   })
     .then((rows) => res.status(200).send(getFormattedPatientCount(rows)))
